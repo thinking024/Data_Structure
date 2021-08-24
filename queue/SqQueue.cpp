@@ -12,8 +12,8 @@ typedef int Elem;
 typedef struct SqQueue
 {
     Elem *data; //  动态分配空间
-    int front;
-    int rear;
+    int front; // 指向队首元素
+    int rear; // 指向队尾元素的下个位置
 } SqQueue;
 
 bool init(SqQueue &q)
