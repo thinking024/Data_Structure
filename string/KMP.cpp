@@ -17,6 +17,7 @@ typedef struct {
 int* getNext(SqString s)
 {
     int* next = new int[s.length + 1];
+    next[1] = 0;
     int i = 1;
     int j = 0;
     while (i < s.length)
@@ -39,6 +40,7 @@ int* getNext(SqString s)
 int* getNextVal(SqString s)
 {
     int* nextVal = new int[s.length + 1];
+    nextVal[1] = 0;
     int i = 1;
     int j = 0;
     while (i < s.length)
