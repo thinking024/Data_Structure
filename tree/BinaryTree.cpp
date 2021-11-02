@@ -9,13 +9,13 @@ typedef struct BTNode {
     struct BTNode *lelfChild, *rightChild;
 } BTNode, *BinaryTree;
 
+#pragma region queue
 typedef struct QNode
 {
     BTNode* data;
     struct QNode* next;
 } QNode, *QNodePtr;
 
-#pragma region queue
 typedef struct {
     QNodePtr front; // 带头结点的链式队列
     QNodePtr rear; // 指向队尾元素
