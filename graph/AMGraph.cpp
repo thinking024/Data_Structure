@@ -16,7 +16,7 @@ typedef struct AMGraph
     int vexNum, arcNum;
 } AMGraph;
 
-int visited[MVNUM] = {0};
+int isVisited[MVNUM] = {0};
 
 // 用于定位顶点在顶点数组中的下标
 int getIndex(VerTex vexs[], VerTex vex)
@@ -58,28 +58,28 @@ void create(AMGraph &graph)
 }
 
 // 从vex顶点开始，dfs遍历连通图
-void DFS(AMGraph graph, int vex)
+void DFSConnected(AMGraph graph, int vex)
 {
     cout << graph.vexs[vex] << " ";
-    visited[vex] = 1;
+    isVisited[vex] = 1;
     for (size_t i = 0; i < graph.vexNum; i++)
     {
         // 访问与之相连且未被访问过的结点
-        if (graph.arcs[vex][i] != 0 && visited[i] == 0)
+        if (graph.arcs[vex][i] != 0 && isVisited[i] == 0)
         {
-            DFS(graph, i);
+            DFSConnected(graph, i);
         }
     }
 }
 
-// 从vex顶点开始，dfs遍历非连通图
+// dfs遍历非连通图
 void DFSUnconnected(AMGraph graph)
 {
     for (size_t i = 0; i < graph.vexNum; i++)
     {
-        if (visited[i] == 0)
+        if (isVisited[i] == 0)
         {
-            DFS(graph, i);
+            DFSConnected(graph, i);
         }   
     }
 }
