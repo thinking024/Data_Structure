@@ -18,6 +18,57 @@ typedef struct AMGraph
 
 int isVisited[MVNUM] = {0};
 
+#pragma region queue
+typedef struct QNode
+{
+    int data;
+    struct QNode* next;
+} QNode, *QNodePtr;
+
+typedef struct {
+    QNodePtr front; // 带头结点的链式队列
+    QNodePtr rear; // 指向队尾元素
+} LinkQueue;
+
+void initQueue(LinkQueue &q)
+{
+    q.front = q.rear = new QNode; // 初始时，front与rear均指向头结点
+    q.front->next = NULL;
+}
+
+bool isEmpty(LinkQueue q)
+{
+    return q.front == q.rear;
+}
+
+void enQueue(LinkQueue &q, int e)
+{
+    QNodePtr newNode = new QNode;
+    newNode->next = NULL;
+    newNode->data = e;
+    q.rear->next = newNode;
+    q.rear = newNode;
+}
+
+// 删除front后的元素
+bool deQueue(LinkQueue &q, int &e)
+{
+    if (q.rear == q.front)
+    {
+        return false;
+    }
+    QNodePtr deleteNode = q.front->next; // 找到队首元素
+    e = deleteNode->data;
+    q.front->next = deleteNode->next;
+    if (q.rear == deleteNode) // 删除的是队尾元素
+    {
+        q.rear = q.front;
+    }
+    delete deleteNode;
+    return true;
+}
+#pragma endregion
+
 // 用于定位顶点在顶点数组中的下标
 int getIndex(VerTex vexs[], VerTex vex)
 {
@@ -57,6 +108,7 @@ void create(AMGraph &graph)
     }
 }
 
+#pragma region dfs
 // 从vex顶点开始，dfs遍历连通图
 void DFSConnected(AMGraph graph, int vex)
 {
@@ -65,7 +117,7 @@ void DFSConnected(AMGraph graph, int vex)
     for (size_t i = 0; i < graph.vexNum; i++)
     {
         // 访问与之相连且未被访问过的结点
-        if (graph.arcs[vex][i] != 0 && isVisited[i] == 0)
+        if (graph.arcs[vex][i] != MAXINT && isVisited[i] == 0)
         {
             DFSConnected(graph, i);
         }
@@ -83,11 +135,53 @@ void DFSUnconnected(AMGraph graph)
         }   
     }
 }
+#pragma endregion
+
+#pragma region bfs
+void BFSConnected(AMGraph graph, int vex)
+{
+    // 树的层次遍历：先入队，出队时再访问
+    // 图的层次遍历：先访问，再入队
+    cout << graph.vexs[vex] << " ";
+    isVisited[vex] = 1;
+    LinkQueue queue;
+    initQueue(queue);
+    enQueue(queue, vex);
+    while (isEmpty(queue) == 0)
+    {
+        int index;
+        deQueue(queue, index);
+        
+        for (size_t i = 0; i < graph.vexNum; i++)
+        {
+            if (graph.arcs[index][i] != MAXINT && isVisited[i] == 0)
+            {
+                cout << graph.vexs[i] << " ";
+                isVisited[i] = 1;
+                enQueue(queue, i);
+            }
+        }
+    }
+    
+}
+
+void BFSUnConnected(AMGraph graph)
+{
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        if (isVisited[i] == 0)
+        {
+            BFSConnected(graph, i);
+        }
+    }
+}
+#pragma endregion
 
 int main()
 {
     AMGraph graph;
     create(graph);
-    DFSUnconnected(graph);
+    // DFSUnconnected(graph);
+    BFSUnConnected(graph);
     return 0;
 }

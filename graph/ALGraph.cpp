@@ -31,6 +31,58 @@ typedef struct ALGraph
 
 int isVisited[MVNUM] = {0};
 
+#pragma region queue
+typedef struct QNode
+{
+    int data;
+    struct QNode* next;
+} QNode, *QNodePtr;
+
+typedef struct {
+    QNodePtr front; // 带头结点的链式队列
+    QNodePtr rear; // 指向队尾元素
+} LinkQueue;
+
+void initQueue(LinkQueue &q)
+{
+    q.front = q.rear = new QNode; // 初始时，front与rear均指向头结点
+    q.front->next = NULL;
+}
+
+bool isEmpty(LinkQueue q)
+{
+    return q.front == q.rear;
+}
+
+void enQueue(LinkQueue &q, int e)
+{
+    QNodePtr newNode = new QNode;
+    newNode->next = NULL;
+    newNode->data = e;
+    q.rear->next = newNode;
+    q.rear = newNode;
+}
+
+// 删除front后的元素
+bool deQueue(LinkQueue &q, int &e)
+{
+    if (q.rear == q.front)
+    {
+        return false;
+    }
+    QNodePtr deleteNode = q.front->next; // 找到队首元素
+    e = deleteNode->data;
+    q.front->next = deleteNode->next;
+    if (q.rear == deleteNode) // 删除的是队尾元素
+    {
+        q.rear = q.front;
+    }
+    delete deleteNode;
+    return true;
+}
+#pragma endregion
+
+
 // 用于定位顶点在顶点数组中的下标
 int getIndex(List vexs, VerTex vex)
 {
@@ -73,6 +125,7 @@ void create(ALGraph &graph)
     }
 }
 
+#pragma region dfs
 void DFSConnected(ALGraph graph, int vex)
 {
     VexNode node = graph.vertexs[vex];
@@ -81,9 +134,10 @@ void DFSConnected(ALGraph graph, int vex)
     ArcNode* arc = node.first;
     while (arc)
     {
-        if (isVisited[arc->endIndex] == 0)
+        int endIndex = arc->endIndex;
+        if (isVisited[endIndex] == 0)
         {
-            DFSConnected(graph, arc->endIndex);
+            DFSConnected(graph, endIndex);
         }
         arc = arc->next;
     }
@@ -100,11 +154,54 @@ void DFSUnconnected(ALGraph graph)
         }   
     }
 }
+#pragma endregion
+
+#pragma region bfs
+void BFSConnected(ALGraph graph, int vex)
+{
+    // 树的层次遍历：先入队，出队时再访问
+    // 图的层次遍历：先访问，再入队
+    cout << graph.vertexs[vex].data << " ";
+    isVisited[vex] = 1;
+    LinkQueue queue;
+    initQueue(queue);
+    enQueue(queue, vex);
+    while (isEmpty(queue) == false)
+    {
+        int index;
+        deQueue(queue, index);
+        ArcNode* arc = graph.vertexs[index].first;
+        while (arc)
+        {
+            int endIndex = arc->endIndex;
+            if (isVisited[endIndex] == 0)
+            {
+                cout << graph.vertexs[endIndex].data << " ";
+                isVisited[endIndex] = 1;
+                enQueue(queue, endIndex);
+            }
+            arc = arc->next;
+        }
+    }
+}
+
+void BFSUnconnected(ALGraph graph)
+{
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        if (isVisited[i] == 0)
+        {
+            BFSConnected(graph, i);
+        }
+    }
+}
+#pragma endregion
 
 int main()
 {
     ALGraph graph;
     create(graph);
-    DFSUnconnected(graph);
+    // DFSUnconnected(graph);
+    BFSUnconnected(graph);
     return 0;
 }
