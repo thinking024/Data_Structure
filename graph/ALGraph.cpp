@@ -27,7 +27,9 @@ typedef struct ALGraph
 {
     List vertexs;
     int vexNum, arcNum;
-};
+} ALGraph;
+
+int isVisited[MVNUM] = {0};
 
 // 用于定位顶点在顶点数组中的下标
 int getIndex(List vexs, VerTex vex)
@@ -71,7 +73,38 @@ void create(ALGraph &graph)
     }
 }
 
+void DFSConnected(ALGraph graph, int vex)
+{
+    VexNode node = graph.vertexs[vex];
+    cout << node.data << " ";
+    isVisited[vex] = 1;
+    ArcNode* arc = node.first;
+    while (arc)
+    {
+        if (isVisited[arc->endIndex] == 0)
+        {
+            DFSConnected(graph, arc->endIndex);
+        }
+        arc = arc->next;
+    }
+}
+
+// dfs遍历非连通图
+void DFSUnconnected(ALGraph graph)
+{
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        if (isVisited[i] == 0)
+        {
+            DFSConnected(graph, i);
+        }   
+    }
+}
+
 int main()
 {
+    ALGraph graph;
+    create(graph);
+    DFSUnconnected(graph);
     return 0;
 }
