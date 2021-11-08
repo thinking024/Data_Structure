@@ -104,7 +104,7 @@ void create(AMGraph &graph)
         int i = getIndex(graph.vexs, start);
         int j = getIndex(graph.vexs, end);
         graph.arcs[i][j] = value;
-        graph.arcs[j][i] = value; // 无向图的邻接矩阵是对称的
+        // graph.arcs[j][i] = value; // 无向图的邻接矩阵是对称的
     }
 }
 
@@ -311,7 +311,74 @@ void kruskal(AMGraph graph)
 }
 #pragma endregion
 
+#pragma region dijkstra for directed net
+int sure[MVNUM]; // 判断是否找到了源点到每个顶点最短路径
+int path[MVNUM]; // 源点到终点的最短路径上的前驱
+int dis[MVNUM];
 
+void dijkstra(AMGraph graph, int vexIndex)
+{
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        sure[i] = 0;
+        dis[i] = 0;
+        dis[i] = graph.arcs[vexIndex][i];
+        if (dis[i] != MAXINT)
+        {
+            path[i] = vexIndex;
+        }
+        else
+        {
+            path[i] = -1;
+        }
+    }
+    
+    sure[vexIndex] = 1;
+    dis[vexIndex] = 0;
+    for (size_t i = 0; i < graph.vexNum - 1; i++)
+    {
+        // 从剩下未确定的顶点中，找到距离最小的
+        int minDis = MAXINT;
+        int minIndex;
+        for (size_t j = 0; j < graph.vexNum; j++)
+        {
+            if (sure[j] == 0 && dis[j] < minDis)
+            {
+                minDis = dis[j];
+                minIndex = j;
+            }
+        }
+        
+        // 归入路径后，将剩下未确定的路径都更新一次
+        sure[minIndex] = 1;
+        for (size_t j = 0; j < graph.vexNum; j++)
+        {
+            if (sure[j] == 0 && dis[minIndex] + graph.arcs[minIndex][j] < dis[j])
+            {
+                path[j] = minIndex;
+                dis[j] = dis[minIndex] + graph.arcs[minIndex][j];
+            }
+        }
+    }
+
+    // 输出路径
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        if (sure[i] == 1)
+        {
+            cout << dis[i] << "=";
+            int j = i;
+            while (j != vexIndex)
+            {
+                cout << graph.vexs[j] << "<-";
+                j = path[j];
+            }
+            cout << graph.vexs[vexIndex] << endl;
+        }
+    }
+}
+
+#pragma endregion
 
 int main()
 {
@@ -320,6 +387,7 @@ int main()
     // DFSUnconnected(graph);
     // BFSUnConnected(graph);
     // prim(graph, 'a');
-    kruskal(graph);
+    // kruskal(graph);
+    dijkstra(graph, 0);
     return 0;
 }
