@@ -177,11 +177,149 @@ void BFSUnConnected(AMGraph graph)
 }
 #pragma endregion
 
+#pragma region prim for connected undirected
+// 记录与生成树相连的n-1条最小权值的边
+struct 
+{
+    VerTex adjVex; // 边的一个顶点
+    Arc weight;
+} closeEdge[MVNUM];
+
+void prim(AMGraph graph, VerTex vex)
+{
+    // 初始化与生成树相连的边
+    int index = getIndex(graph.vexs, vex);
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        closeEdge[i].adjVex = vex;
+        closeEdge[i].weight = graph.arcs[index][i];
+    }
+    closeEdge[index].weight = 0;
+
+    // 生成n-1条边
+    for (size_t i = 1; i < graph.vexNum; i++)
+    {
+        // 从剩下还未划分进生成树的顶点中，找到权值最小的边
+        int minWeight = MAXINT;
+        int minIndex;
+        for (size_t j = 0; j < graph.vexNum; j++)
+        {
+            if (closeEdge[j].weight != 0 && closeEdge[j].weight < minWeight)
+            {
+                minIndex = j;
+                minWeight = closeEdge[j].weight;
+            }
+        }
+
+        // 得到这条最小边的两个顶点
+        closeEdge[minIndex].weight = 0;
+        VerTex start = closeEdge[minIndex].adjVex;
+        VerTex end = graph.vexs[minIndex];
+        cout << start << "--"<< end << " ";
+
+        // 新顶点归入生成树后，重新计算生成树到各个顶点的距离
+        for (size_t j = 0; j < graph.vexNum; j++)
+        {
+            if (graph.arcs[minIndex][j] < closeEdge[j].weight)
+            {
+                closeEdge[j].weight = graph.arcs[minIndex][j];
+                closeEdge[j].adjVex = graph.vexs[minIndex];
+            }
+        }
+    }
+}
+#pragma endregion
+
+#pragma region kruskal for connected undirected
+struct edge
+{
+    int startIndex; // 边的两个顶点
+    int endIndex;
+    Arc weight;
+} edges[MVNUM];
+
+int vexSet[MVNUM]; // 每个顶点所属的连通分量
+
+// 初始化edges数组，并对其进行排序
+void initEdges(AMGraph graph)
+{
+    int index = 0;
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        for (size_t j = 0; j <= i; j++)
+        {
+            if (graph.arcs[i][j] != MAXINT)
+            {
+                edges[index].startIndex = j;
+                edges[index].endIndex = i;
+                edges[index].weight = graph.arcs[i][j];
+                index++;
+            }
+        }
+    }
+
+    for (size_t i = 0; i < graph.arcNum - 1; i++)
+    {
+        int min = i;
+        for (size_t j = i + 1; j < graph.arcNum; j++)
+        {
+            if (edges[j].weight < edges[min].weight)
+            {
+                min = j;
+            }
+        }
+        
+        if (min != i)
+        {
+            struct edge temp = edges[i];
+            edges[i] = edges[min];
+            edges[min] = temp;
+        }
+    }
+}
+
+void kruskal(AMGraph graph)
+{
+    initEdges(graph);
+    for (size_t i = 0; i < graph.vexNum; i++)
+    {
+        vexSet[i] = i;
+    }
+
+    for (size_t i = 0; i < graph.arcNum; i++)
+    {
+        int startIndex = edges[i].startIndex;
+        int endIndex = edges[i].endIndex;
+        int set1 = vexSet[startIndex];
+        int set2 = vexSet[endIndex];
+
+        // 边的两个顶点不属于同一个连通分量，即加入该边后不会构成回路
+        if (set1 != set2)
+        {
+            cout << graph.vexs[startIndex] << "--" << graph.vexs[endIndex] << " ";
+            
+            // 将两个连通分量合并
+            for (size_t j = 0; j < graph.vexNum; j++)
+            {
+                if (vexSet[j] == set2)
+                {
+                    vexSet[j] = set1;
+                }
+            }
+        }
+    }
+}
+#pragma endregion
+
+
+
 int main()
 {
     AMGraph graph;
     create(graph);
     // DFSUnconnected(graph);
-    BFSUnConnected(graph);
+    // BFSUnConnected(graph);
+    // prim(graph, 'a');
+    kruskal(graph);
     return 0;
 }
