@@ -334,17 +334,15 @@ void dijkstra(AMGraph graph, int vexIndex)
     }
     
     sure[vexIndex] = 1;
-    dis[vexIndex] = 0;
+    dis[vexIndex] = MAXINT;
     for (size_t i = 0; i < graph.vexNum - 1; i++)
     {
         // 从剩下未确定的顶点中，找到距离最小的
-        int minDis = MAXINT;
-        int minIndex;
+        int minIndex = vexIndex;
         for (size_t j = 0; j < graph.vexNum; j++)
         {
-            if (sure[j] == 0 && dis[j] < minDis)
+            if (sure[j] == 0 && dis[j] < dis[minIndex])
             {
-                minDis = dis[j];
                 minIndex = j;
             }
         }
