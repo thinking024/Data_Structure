@@ -12,7 +12,7 @@ typedef int Arc;
 typedef struct AMGraph
 {
     VerTex vexs[MVNUM];     // 存储顶点的数组
-    Arc arcs[MVNUM][MVNUM]; // 存储边的数组
+    Arc arcs[MVNUM][MVNUM]; // 存储边的数组，无向图主对角线为0，有向图主对角线为无穷
     int vexNum, arcNum;
 } AMGraph;
 

@@ -21,7 +21,7 @@ int partion(int a[], int low, int high)
         a[high] = a[low];
     }
     a[low] = pivot;
-    return pivot;
+    return low;
 }
 
 void quickSort(int a[], int low, int high)
