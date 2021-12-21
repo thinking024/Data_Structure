@@ -90,7 +90,7 @@ int main()
     {
         cout << queue->elements[i] << " ";
     }
-    
+    cout << endl;
     for (size_t i = 0; i < 5; i++)
     {
         Elem elem = 0;
