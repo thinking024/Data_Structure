@@ -11,7 +11,7 @@ typedef int Arc;
 
 typedef struct AMGraph
 {
-    VerTex vexs[MVNUM];     // 存储顶点的数组
+    VerTex vex[MVNUM];     // 存储顶点的数组
     Arc arcs[MVNUM][MVNUM]; // 存储边的数组，无向图主对角线为0，有向图主对角线为无穷
     int vexNum, arcNum;
 } AMGraph;
@@ -87,7 +87,7 @@ void create(AMGraph &graph)
     cin >> graph.vexNum >> graph.arcNum;
     for (size_t i = 0; i < graph.vexNum; i++)
     {
-        cin >> graph.vexs[i];
+        cin >> graph.vex[i];
     }
     for (size_t i = 0; i < graph.vexNum; i++)
     {
@@ -101,8 +101,8 @@ void create(AMGraph &graph)
         VerTex start, end;
         Arc value;
         cin >> start >> end >> value;
-        int i = getIndex(graph.vexs, start);
-        int j = getIndex(graph.vexs, end);
+        int i = getIndex(graph.vex, start);
+        int j = getIndex(graph.vex, end);
         graph.arcs[i][j] = value;
         // graph.arcs[j][i] = value; // 无向图的邻接矩阵是对称的
     }
@@ -112,7 +112,7 @@ void create(AMGraph &graph)
 // 从vex顶点开始，dfs遍历连通图
 void DFSConnected(AMGraph graph, int vex)
 {
-    cout << graph.vexs[vex] << " ";
+    cout << graph.vex[vex] << " ";
     isVisited[vex] = 1;
     for (size_t i = 0; i < graph.vexNum; i++)
     {
@@ -142,7 +142,7 @@ void BFSConnected(AMGraph graph, int vex)
 {
     // 树的层次遍历：先入队，出队时再访问
     // 图的层次遍历：先访问，再入队
-    cout << graph.vexs[vex] << " ";
+    cout << graph.vex[vex] << " ";
     isVisited[vex] = 1;
     LinkQueue queue;
     initQueue(queue);
@@ -156,7 +156,7 @@ void BFSConnected(AMGraph graph, int vex)
         {
             if (graph.arcs[index][i] != MAXINT && isVisited[i] == 0)
             {
-                cout << graph.vexs[i] << " ";
+                cout << graph.vex[i] << " ";
                 isVisited[i] = 1;
                 enQueue(queue, i);
             }
@@ -188,7 +188,7 @@ struct
 void prim(AMGraph graph, VerTex vex)
 {
     // 初始化与生成树相连的边
-    int index = getIndex(graph.vexs, vex);
+    int index = getIndex(graph.vex, vex);
     for (size_t i = 0; i < graph.vexNum; i++)
     {
         closeEdge[i].adjVex = vex;
@@ -214,7 +214,7 @@ void prim(AMGraph graph, VerTex vex)
         // 得到这条最小边的两个顶点
         closeEdge[minIndex].weight = 0;
         VerTex start = closeEdge[minIndex].adjVex;
-        VerTex end = graph.vexs[minIndex];
+        VerTex end = graph.vex[minIndex];
         cout << start << "--"<< end << " ";
 
         // 新顶点归入生成树后，重新计算生成树到各个顶点的距离
@@ -223,7 +223,7 @@ void prim(AMGraph graph, VerTex vex)
             if (graph.arcs[minIndex][j] < closeEdge[j].weight)
             {
                 closeEdge[j].weight = graph.arcs[minIndex][j];
-                closeEdge[j].adjVex = graph.vexs[minIndex];
+                closeEdge[j].adjVex = graph.vex[minIndex];
             }
         }
     }
@@ -296,7 +296,7 @@ void kruskal(AMGraph graph)
         // 边的两个顶点不属于同一个连通分量，即加入该边后不会构成回路
         if (set1 != set2)
         {
-            cout << graph.vexs[startIndex] << "--" << graph.vexs[endIndex] << " ";
+            cout << graph.vex[startIndex] << "--" << graph.vex[endIndex] << " ";
             
             // 将两个连通分量合并
             for (size_t j = 0; j < graph.vexNum; j++)
@@ -321,7 +321,6 @@ void dijkstra(AMGraph graph, int vexIndex)
     for (size_t i = 0; i < graph.vexNum; i++)
     {
         sure[i] = 0;
-        dis[i] = 0;
         dis[i] = graph.arcs[vexIndex][i];
         if (dis[i] != MAXINT)
         {
@@ -334,7 +333,6 @@ void dijkstra(AMGraph graph, int vexIndex)
     }
     
     sure[vexIndex] = 1;
-    dis[vexIndex] = MAXINT;
     for (size_t i = 0; i < graph.vexNum - 1; i++)
     {
         // 从剩下未确定的顶点中，找到距离最小的
@@ -368,10 +366,10 @@ void dijkstra(AMGraph graph, int vexIndex)
             int j = i;
             while (j != vexIndex)
             {
-                cout << graph.vexs[j] << "<-";
+                cout << graph.vex[j] << "<-";
                 j = path[j];
             }
-            cout << graph.vexs[vexIndex] << endl;
+            cout << graph.vex[vexIndex] << endl;
         }
     }
 }
