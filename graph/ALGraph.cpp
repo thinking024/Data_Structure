@@ -25,7 +25,7 @@ typedef struct VexNode
 
 typedef struct ALGraph
 {
-    List vertexs;
+    List vertex;
     int vexNum, arcNum;
 } ALGraph;
 
@@ -101,8 +101,8 @@ void create(ALGraph &graph)
     cin >> graph.vexNum >> graph.arcNum;
     for (size_t i = 0; i < graph.vexNum; i++)
     {
-        cin >> graph.vertexs[i].data;
-        graph.vertexs[i].first = NULL;
+        cin >> graph.vertex[i].data;
+        graph.vertex[i].first = NULL;
     }
 
     for (size_t k = 0; k < graph.arcNum; k++)
@@ -110,16 +110,16 @@ void create(ALGraph &graph)
         VerTex start, end;
         Arc value;
         cin >> start >> end >> value;
-        int i = getIndex(graph.vertexs, start);
-        int j = getIndex(graph.vertexs, end);
+        int i = getIndex(graph.vertex, start);
+        int j = getIndex(graph.vertex, end);
 
         ArcNode* node = new ArcNode;
         node->value = value;
         node->endIndex = j;
 
         // 把新生成的结点插入表头
-        node->next = graph.vertexs[i].first;
-        graph.vertexs[i].first = node;
+        node->next = graph.vertex[i].first;
+        graph.vertex[i].first = node;
 
         // 无向图还需将i j互换再做一次
     }
@@ -128,7 +128,7 @@ void create(ALGraph &graph)
 #pragma region dfs
 void DFSConnected(ALGraph graph, int vex)
 {
-    VexNode node = graph.vertexs[vex];
+    VexNode node = graph.vertex[vex];
     cout << node.data << " ";
     isVisited[vex] = 1;
     ArcNode* arc = node.first;
@@ -161,7 +161,7 @@ void BFSConnected(ALGraph graph, int vex)
 {
     // 树的层次遍历：先入队，出队时再访问
     // 图的层次遍历：先访问，再入队
-    cout << graph.vertexs[vex].data << " ";
+    cout << graph.vertex[vex].data << " ";
     isVisited[vex] = 1;
     LinkQueue queue;
     initQueue(queue);
@@ -170,13 +170,13 @@ void BFSConnected(ALGraph graph, int vex)
     {
         int index;
         deQueue(queue, index);
-        ArcNode* arc = graph.vertexs[index].first;
+        ArcNode* arc = graph.vertex[index].first;
         while (arc)
         {
             int endIndex = arc->endIndex;
             if (isVisited[endIndex] == 0)
             {
-                cout << graph.vertexs[endIndex].data << " ";
+                cout << graph.vertex[endIndex].data << " ";
                 isVisited[endIndex] = 1;
                 enQueue(queue, endIndex);
             }
