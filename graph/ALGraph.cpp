@@ -141,6 +141,7 @@ void DFSConnected(ALGraph graph, int vex)
         }
         arc = arc->next;
     }
+    // 此处将顶点vex入栈。最后将该栈中的元素依次弹出，即可得到拓扑排序
 }
 
 // dfs遍历非连通图
