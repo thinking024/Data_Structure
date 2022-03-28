@@ -50,6 +50,7 @@ void heapSort(int a[], int len)
     }
 }
 
+// 链式：X，稳定：X
 int main()
 {
     int a[6] = {0, 4, 3, 5, 1, 2};

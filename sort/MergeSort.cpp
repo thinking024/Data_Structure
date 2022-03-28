@@ -50,6 +50,7 @@ void mergeSort(int a[], int n)
     sort(a, a, 0, n - 1);
 }
 
+// 链式：√，稳定：√
 int main()
 {
     int a[5] = {4, 3, 5, 1, 2};

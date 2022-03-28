@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 
+// 链式：√，稳定：√，只是采用了交换元素变得不稳定
 int main()
 {
     int i, j, min, n, temp;

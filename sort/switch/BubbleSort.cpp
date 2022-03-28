@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
 
+// 链式：√，稳定：√
 int main()
 {
     int i, j, low, high, temp, mid, n;

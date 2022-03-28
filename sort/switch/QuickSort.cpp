@@ -34,6 +34,7 @@ void quickSort(int a[], int low, int high)
     }
 }
 
+// 链式：X，稳定：X
 int main()
 {
     int a[5] = {4, 3, 5, 1, 2};
