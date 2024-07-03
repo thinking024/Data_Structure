@@ -142,6 +142,8 @@ void BFSConnected(AMGraph graph, int vex)
 {
     // 树的层次遍历：先入队，出队时再访问
     // 图的层次遍历：先访问，再入队
+    // 因为可能会多次遇到同一个顶点，但只希望一次将其加入队列。
+    // 如果在出队的时候才标记顶点为已访问，那么可能在遍历其邻居时再次错误地将该顶点加入队列，导致无限循环或者重复遍历
     cout << graph.vex[vex] << " ";
     isVisited[vex] = 1;
     LinkQueue queue;
